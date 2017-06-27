@@ -7,10 +7,28 @@ node('cloud') {
     checkout scm
 
     gitCommit = sh(script: "git rev-parse --short=6 HEAD", returnStdout: true).trim()
-    env.REVISION = "${BRANCH_NAME}-${BUILD_ID}-${gitCommit}".replaceAll("/", "-")
+    date      = sh(script: "date +%Y%m%d%H%M%S", returnStdout: true).trim()
+    branch    = sh(script: "echo '${env.BRANCH_NAME}' | sed  's/[^A-Za-z0-9]/_/g'", returnStdout: true).trim()
+
+    // env.REVISION = "${BRANCH_NAME}-${BUILD_ID}-${gitCommit}".replaceAll("/", "-")
+    env.LATEST = "${branch}-${date}-${gitCommit}-latest"
+    env.QA     = "${branch}-${date}-${gitCommit}-qa"
+    env.PROD   = "${branch}-${date}-${gitCommit}-prod"
   }
   stage('docker build') {
-    env.DOCKER_IMAGE_ID = "${env.DOCKER_REPOSITORY}:${env.REVISION}"
-    sh "docker build -t ${env.DOCKER_IMAGE_ID} ."
+    sh "docker build -t ${env.DOCKER_REPOSITORY}:${env.LATEST} ."
+  }
+  stage("docker push latest") {
+    sh "docker push ${env.DOCKER_REPOSITORY}:${env.LATEST}"
+  }
+
+  stage("docker push qa") {
+    sh "docker tag ${env.DOCKER_REPOSITORY}:${env.LATEST} ${env.DOCKER_REPOSITORY}:${env.QA}"
+    sh "docker push ${env.DOCKER_REPOSITORY}:${env.QA}"
+  }
+
+  stage("docker push prod") {
+    sh "docker tag ${env.DOCKER_REPOSITORY}:${env.LATEST} ${env.DOCKER_REPOSITORY}:${env.PROD}"
+    sh "docker push ${env.DOCKER_REPOSITORY}:${env.PROD}"
   }
 }
