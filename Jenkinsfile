@@ -11,9 +11,9 @@ node('cloud') {
     branch    = sh(script: "echo '${env.BRANCH_NAME}' | sed  's/[^A-Za-z0-9]/_/g'", returnStdout: true).trim()
 
     // env.REVISION = "${BRANCH_NAME}-${BUILD_ID}-${gitCommit}".replaceAll("/", "-")
-    env.LATEST = "${branch}-${date}-${gitCommit}-latest"
-    env.QA     = "${branch}-${date}-${gitCommit}-qa"
-    env.PROD   = "${branch}-${date}-${gitCommit}-prod"
+    env.LATEST = "${branch}.${date}.${gitCommit}.latest"
+    env.QA     = "${branch}.${date}.${gitCommit}.qa"
+    env.PROD   = "${branch}.${date}.${gitCommit}.prod"
   }
   stage('docker build') {
     sh "docker build -t ${env.DOCKER_REPOSITORY}:${env.LATEST} ."
