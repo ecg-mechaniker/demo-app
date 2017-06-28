@@ -23,19 +23,19 @@ node('cloud') {
   }
 }
 
-input "Push to QA?"
+stage("docker push qa") {
+  input "Push to QA?"
 
-node('cloud') {
-  stage("docker push qa") {
+  node('cloud') {
     sh "docker tag ${env.DOCKER_REPOSITORY}:${env.LATEST} ${env.DOCKER_REPOSITORY}:${env.QA}"
     sh "docker push ${env.DOCKER_REPOSITORY}:${env.QA}"
   }
 }
 
-input "Push to PROD?"
+stage("docker push prod") {
+  input "Push to PROD?"
 
-node('cloud') {
-  stage("docker push prod") {
+  node('cloud') {
     sh "docker tag ${env.DOCKER_REPOSITORY}:${env.LATEST} ${env.DOCKER_REPOSITORY}:${env.PROD}"
     sh "docker push ${env.DOCKER_REPOSITORY}:${env.PROD}"
   }
