@@ -3,7 +3,7 @@
 [ $MARATHON ] || { echo "please export MARATHON=<marathon_address_no_port>" && exit 1; }
 JSON='
 {
- "id": "demo-app-ws",
+ "id": "demo-app",
  "mem": 16,
  "cpus": 0.1,
  "instances": 1,
