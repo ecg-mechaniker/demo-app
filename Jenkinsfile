@@ -35,3 +35,6 @@ stage("docker push prod") {
     sh "docker push ${env.DOCKER_REPOSITORY}:${env.PROD}"
   }
 }
+
+echo "${env.DOCKER_REPOSITORY}:${env.LATEST}"
+echo "${env.DOCKER_REPOSITORY}:${env.PROD}"
